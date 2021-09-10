@@ -13,13 +13,14 @@
     </div>
   </div>
 
+
 <style>
   html {
     box-sizing: border-box;
   }
-  
-  *, *:before, *:after { 
-    box-sizing: inherit; 
+
+  *, *:before, *:after {
+    box-sizing: inherit;
   }
 
   div {
@@ -39,9 +40,47 @@
     background: coral;
   }
 </style>
+  <button type="button" name="button">I'll work only once!</button>
 
-<button></button>
 <script>
+// This challenge teaches about Event capturing, Bubbling & Propagation, 'once' option.
+
+// For nested divs in this example, all the divs are listening for click events.
+/* As the divs are nested within each other, if we click the inner-most div, then the click event is fired for itself
+   as well for the two parent divs, this is called as 'bubbling', as technically when we click the 3rd div, we are also clicking
+   the first and second div as it is nested within them. Bubbling occurs from bottom to top.
+
+   Capturing refers to the top-to-down approach by the browser to figure out which object fired the event,
+   so in this case the browser goes from body->div1->div2->div3 to find that the 3rd div fired the click event.
+   This is called the Event capturing. During this 1st and 2nd divs' click events are not fired.
+
+  */
+  const divs = document.querySelectorAll("div");
+
+  function logClick (e) {
+    console.log(this.classList.value);
+    // The stopPropagation method is used to stop this bubbling of event firings from the 3rd div towards the body element.
+    e.stopPropagation();
+  }
+// The third parameter for the addEventListener is an JS object to specify options for the event.
+  divs.forEach((div) => {
+    div.addEventListener('click', logClick, {
+      capture: false, // capture option is used to fire the event of the 1st and 2nd div here during the event capturing.
+      once: false
+    });
+  });
+
+  /* The once option for the addEventListener options. This option is used to unbind the event after the
+      event has been fired once for an object. After the first occurence of the event, further events do not occus
+      for that object as the event has been unbind.
+  */
+  const button = document.querySelector("button");
+
+  button.addEventListener('click', (e) => {
+    console.log("I was clicked and now won't work!!");
+  }, {
+    once: true
+  });
 
 </script>
 </body>
